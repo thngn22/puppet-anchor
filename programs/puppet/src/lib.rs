@@ -6,8 +6,14 @@ declare_id!("3Zrk1LeDXB5RueXiDcjvsww8hZMPG7Lp5ej5j9Mt81Th");
 pub mod puppet {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        
+    pub fn initialize(_ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
+
+    pub fn set_data(ctx: Context<SetData>, data: u64) -> Result<()> {
+        let puppet = &mut ctx.accounts.puppet;
+        puppet.data = data;
+
         Ok(())
     }
 }
@@ -21,6 +27,11 @@ pub struct Initialize<'info> {
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Accounts)]
+pub struct SetData<'info> {
+    #[account(mut)]
+    pub puppet: Account<'info, Data>,
+}
 #[account]
 pub struct Data {
     pub data: u64,

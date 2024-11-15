@@ -7,6 +7,7 @@ skip-lint = false
 
 [programs.localnet]
 puppet = "3Zrk1LeDXB5RueXiDcjvsww8hZMPG7Lp5ej5j9Mt81Th"
+puppet-master = "7tWS9RxLjAfCCbTFvFb7UFJF9ze6nMZYvVNCrsUcP73k"
 
 [registry]
 url = "https://api.apr.dev"

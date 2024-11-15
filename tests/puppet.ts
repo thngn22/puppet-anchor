@@ -1,16 +1,42 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Puppet } from "../target/types/puppet";
+import { PuppetMaster } from "../target/types/puppet_master";
+import { expect } from "chai";
 
 describe("puppet", () => {
   // Configure the client to use the local cluster.
-  anchor.setProvider(anchor.AnchorProvider.env());
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
-  const program = anchor.workspace.Puppet as Program<Puppet>;
+  const puppetProgram = anchor.workspace.Puppet as Program<Puppet>;
+  const puppetMasterProgram = anchor.workspace
+    .PuppetMaster as Program<PuppetMaster>;
 
-  it("Is initialized!", async () => {
+  const puppetKeypair = anchor.web3.Keypair.generate();
+
+  it("puppet!", async () => {
     // Add your test here.
-    const tx = await program.methods.initialize().rpc();
-    console.log("Your transaction signature", tx);
+    await puppetProgram.methods
+      .initialize()
+      .accounts({
+        puppet: puppetKeypair.publicKey,
+        user: provider.wallet.publicKey,
+      })
+      .signers([puppetKeypair])
+      .rpc();
+
+    await puppetMasterProgram.methods
+      .pullString(new anchor.BN(42))
+      .accounts({
+        puppet: puppetKeypair.publicKey,
+      })
+      .rpc();
+
+    expect(
+      (
+        await puppetProgram.account.data.fetch(puppetKeypair.publicKey)
+      ).data.toNumber()
+    ).to.equal(42);
   });
 });
