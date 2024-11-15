@@ -1,0 +1,19 @@
+[toolchain]
+package_manager = "Yarn"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+puppet = "3Zrk1LeDXB5RueXiDcjvsww8hZMPG7Lp5ej5j9Mt81Th"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
