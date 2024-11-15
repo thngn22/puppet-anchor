@@ -6,7 +6,9 @@ declare_id!("3Zrk1LeDXB5RueXiDcjvsww8hZMPG7Lp5ej5j9Mt81Th");
 pub mod puppet {
     use super::*;
 
-    pub fn initialize(_ctx: Context<Initialize>) -> Result<()> {
+    pub fn initialize(_ctx: Context<Initialize>, authority: Pubkey) -> Result<()> {
+        _ctx.accounts.puppet.authority = authority;
+
         Ok(())
     }
 
@@ -20,7 +22,7 @@ pub mod puppet {
 
 #[derive(Accounts)]
 pub struct Initialize<'info> {
-    #[account(init, payer = user, space = 8 + 8)]
+    #[account(init, payer = user, space = 8 + 8 + 32)]
     pub puppet: Account<'info, Data>,
     #[account(mut)]
     pub user: Signer<'info>,
@@ -29,10 +31,12 @@ pub struct Initialize<'info> {
 
 #[derive(Accounts)]
 pub struct SetData<'info> {
-    #[account(mut)]
+    #[account(mut, has_one = authority)]
     pub puppet: Account<'info, Data>,
+    pub authority: Signer<'info>,
 }
 #[account]
 pub struct Data {
     pub data: u64,
+    pub authority: Pubkey,
 }

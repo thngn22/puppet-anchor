@@ -14,11 +14,12 @@ describe("puppet", () => {
     .PuppetMaster as Program<PuppetMaster>;
 
   const puppetKeypair = anchor.web3.Keypair.generate();
+  const authorityKeypair = anchor.web3.Keypair.generate();
 
   it("puppet!", async () => {
     // Add your test here.
     await puppetProgram.methods
-      .initialize()
+      .initialize(authorityKeypair.publicKey)
       .accounts({
         puppet: puppetKeypair.publicKey,
         user: provider.wallet.publicKey,
@@ -30,7 +31,9 @@ describe("puppet", () => {
       .pullString(new anchor.BN(42))
       .accounts({
         puppet: puppetKeypair.publicKey,
+        authority: authorityKeypair.publicKey,
       })
+      .signers([authorityKeypair])
       .rpc();
 
     expect(
